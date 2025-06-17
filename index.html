@@ -14,117 +14,107 @@
             --background-blue: #000000;
             --logo-stroke-color: white;
             --page-background: #ffffff;
-            --text-color-dark: #1a1a1a;
             --text-color-light: #ffffff;
 
-            /* Tile Specific Colors */
-            --tile-bg-framework: #2d405e; --tile-bg-voice: #f7c758;
-            --tile-bg-logo: #65e5d9; --tile-bg-typography: #ff6a4f;
-            --tile-bg-iconography: #b1d764; --tile-bg-color: #ff9d42;
-            --tile-bg-imagery: #7e2c58; --tile-bg-motion: #d8c4f0;
-            --tile-bg-button: #000000;
-
             /* Animation Timings */
-            --base-draw-duration: 1.3s; --base-draw-delay: 0.3s;
-            --arrow-draw-duration: 0.6s; --arrow-stagger: 0.3s;
-            --reveal-duration: 0.6s; --reveal-easing: cubic-bezier(0.6, 0, 0.2, 1);
+            --base-draw-duration: 1.3s;
+            --base-draw-delay: 0.3s;
+            --arrow-draw-duration: 0.6s;
+            --arrow-stagger: 0.3s;
+            --reveal-duration: 0.6s;
             --text-fade-duration: 0.8s;
             --text-fade-delay: 0.5s; /* Delay after logo finishes before text appears */
 
             /* Layout */
-            --grid-gap: 10px; --button-size: 90px;
-            --grid-max-width: 1400px;
-            --logo-scale-in-button: 0.55; --button-border-radius: 8px;
             --logo-stroke-width: 0.7;
-             --tile-min-height: 150px;
-             --tile-min-height-tablet: 140px;
-             --tile-min-height-mobile: 120px;
-         }
+        }
 
-         @media (max-width: 991px) { :root { --grid-gap: 8px; --button-size: 64px; } }
-         @media (max-width: 480px) { :root { --grid-gap: 5px; --button-size: 50px; } }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--page-background);
+            min-height: 105vh;
+            overflow: hidden; /* Start with no scroll */
+            position: relative;
+        }
+        body.loading { opacity: 0; }
+        body.no-scroll { overflow: hidden; }
+        body.can-scroll { overflow: auto; }
 
-         * { margin: 0; padding: 0; box-sizing: border-box; }
-         html { font-size: 16px; scroll-behavior: smooth; }
-         body {
-             /* Use Poppins as the base font, fallback to standard sans-serif */
-             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-             background-color: var(--page-background);
-             color: var(--text-color-dark);
-             min-height: 105vh;
-             overflow: hidden;
-             position: relative;
-         }
-         body.loading { opacity: 0; }
-         body.no-scroll { overflow: hidden; }
-         body.grid-revealed { overflow: auto; }
+        /* --- Splash Screen CSS --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: var(--background-blue);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 100;
+            cursor: default;
+            opacity: 1; visibility: visible;
+            transition: opacity var(--reveal-duration) ease-out, visibility 0s linear var(--reveal-duration);
+            will-change: opacity, visibility;
+        }
+        #splash-logo {
+            width: 30vh;
+            max-width: 70%;
+            height: auto;
+            display: block;
+            position: relative;
+            cursor: pointer; /* Indicate logo is clickable */
+        }
+        #splash-logo path {
+            fill: none;
+            stroke: var(--logo-stroke-color);
+            stroke-width: var(--logo-stroke-width);
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+        }
+        @keyframes drawToZero { to { stroke-dashoffset: 0; } }
+        #splash-logo path.animate-main { animation: drawToZero var(--base-draw-duration) cubic-bezier(.4,0,.3,1) forwards; }
+        #splash-logo path.animate-arrow { animation: drawToZero var(--arrow-draw-duration) cubic-bezier(.4,0,.3,1) forwards; }
 
-         /* --- Splash Screen CSS --- */
-         #splash-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--background-blue); display: flex; justify-content: center; align-items: center; z-index: 100; cursor: default; border-radius: 0; opacity: 1; visibility: visible; transition: opacity var(--reveal-duration) ease-out, visibility 0s linear var(--reveal-duration); will-change: opacity, visibility; }
-         #splash-logo { width: 30vh; max-width: 70%; height: auto; display: block; position: relative; cursor: pointer; /* Indicate logo is clickable */ }
-         #splash-logo path { fill: none; stroke: var(--logo-stroke-color); stroke-width: var(--logo-stroke-width); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
-         @keyframes drawToZero { to { stroke-dashoffset: 0; } }
-         #splash-logo path.animate-main { animation: drawToZero var(--base-draw-duration) cubic-bezier(.4,0,.3,1) forwards; }
-         #splash-logo path.animate-arrow { animation: drawToZero var(--arrow-draw-duration) cubic-bezier(.4,0,.3,1) forwards; }
+        /* --- Splash Screen Text Styles --- */
+        .splash-text {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            color: var(--logo-stroke-color); text-align: center;
+            opacity: 0; visibility: hidden;
+            transition: opacity var(--text-fade-duration) ease-in-out, visibility 0s linear var(--text-fade-duration), font-weight 0.1s linear;
+            pointer-events: none; z-index: 101;
+            font-family: 'Poppins', sans-serif;
+            width: 90%;
+        }
+        #splash-text-top {
+            top: calc(50% - 28vh);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 400; /* Default weight */
+            user-select: none; -webkit-user-select: none; -moz-user-select: none;
+        }
+        #splash-text-bottom {
+            bottom: 65px;
+            font-size: clamp(0.9rem, 2vw, 1.1rem); font-weight: 400;
+        }
+        .splash-text.visible { opacity: 1; visibility: visible; transition-delay: 0s, 0s, 0s; }
 
-         /* --- Splash Screen Text Styles --- */
-         .splash-text {
-             position: absolute; left: 50%; transform: translateX(-50%);
-             color: var(--logo-stroke-color); text-align: center;
-             opacity: 0; visibility: hidden;
-             transition: opacity var(--text-fade-duration) ease-in-out, visibility 0s linear var(--text-fade-duration), font-weight 0.1s linear; /* Add transition for weight */
-             pointer-events: none; z-index: 101;
-             /* Use Poppins font */
-             font-family: 'Poppins', sans-serif;
-             width: 90%; /* Ensure doesn't wrap weirdly */
-         }
-         #splash-text-top {
-             top: calc(50% - 28vh); /* Adjust as needed */
-             font-size: clamp(1.5rem, 4vw, 2.5rem);
-             /* Initial weight set in JS, but can default here */
-             font-weight: 400; /* Default weight */
-             user-select: none; -webkit-user-select: none; -moz-user-select: none;
-         }
-         #splash-text-bottom {
-             /* Position adjusted relative to scroll indicator */
-             bottom: 65px; /* Approx: indicator bottom (20) + height (36) + gap (9) */
-             font-size: clamp(0.9rem, 2vw, 1.1rem); font-weight: 400; /* Regular weight */
-         }
-         .splash-text.visible { opacity: 1; visibility: visible; transition-delay: 0s, 0s, 0s; } /* Adjust transition delays */
-
-         /* --- Standard Grid Layout CSS --- */
-         .nav-container { padding: var(--grid-gap); max-width: var(--grid-max-width); margin: 0 auto; padding-top: calc(2 * var(--grid-gap)); padding-bottom: calc(2 * var(--grid-gap)); opacity: 0; visibility: hidden; transition: opacity var(--reveal-duration) ease-in calc(var(--reveal-duration) * 0.1), visibility 0s linear var(--reveal-duration); will-change: opacity, visibility; position: relative; }
-         .nav-wrapper { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, minmax(var(--tile-min-height), auto)); grid-template-areas: "framework voice logo typography" "iconography color imagery motion"; gap: var(--grid-gap); position: relative; background-color: var(--page-background); }
-         .nav-tile { display: contents; }
-         .nav-tile a { border-radius: 8px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; min-height: var(--tile-min-height); padding: 15px; overflow: hidden; position: relative; transition: transform 0.2s ease-out; text-decoration: none; color: var(--text-color-dark); width: 100%; height: 100%; }
-         .nav-tile a:hover { transform: scale(1.02); }
-         .nav-tile a:focus { outline: 2px solid var(--background-blue); outline-offset: 2px; }
-         .nav-tile a:focus:not(:focus-visible) { outline: none; }
-         .tile-title { background: rgba(255, 255, 255, 0.7); padding: 3px 8px; border-radius: 4px; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); margin-top: auto; z-index: 1; display: inline-block; font-weight: 600; /* Slightly bolder titles */ }
-         .nav-tile-1 { grid-area: framework; } .nav-tile-2 { grid-area: voice; } .nav-tile-3 { grid-area: logo; } .nav-tile-4 { grid-area: typography; } .nav-tile-5 { grid-area: iconography; } .nav-tile-6 { grid-area: color; } .nav-tile-7 { grid-area: imagery; } .nav-tile-8 { grid-area: motion; }
-         .nav-tile-1 a { background-color: var(--tile-bg-framework); color: var(--text-color-light); } .nav-tile-2 a { background-color: var(--tile-bg-voice); } .nav-tile-3 a { background-color: var(--tile-bg-logo); } .nav-tile-4 a { background-color: var(--tile-bg-typography); } .nav-tile-5 a { background-color: var(--tile-bg-iconography); } .nav-tile-6 a { background-color: var(--tile-bg-color); } .nav-tile-7 a { background-color: var(--tile-bg-imagery); color: var(--text-color-light); } .nav-tile-8 a { background-color: var(--tile-bg-motion); }
-         @media (max-width: 991px) { .nav-wrapper { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, minmax(var(--tile-min-height-tablet), auto)); grid-template-areas: "framework voice" "logo typography" "iconography color" "imagery motion"; } }
-         @media (max-width: 480px) { .nav-container { padding-top: var(--grid-gap); padding-bottom: var(--grid-gap); } .nav-wrapper { grid-template-columns: 1fr; grid-template-rows: repeat(8, minmax(var(--tile-min-height-mobile), auto)); grid-template-areas: "framework" "voice" "logo" "typography" "iconography" "color" "imagery" "motion"; position: static; padding-bottom: calc(var(--button-size) + 2 * var(--grid-gap)); } }
-         .nav-tile-2 .tile-title, .nav-tile-3 .tile-title, .nav-tile-4 .tile-title, .nav-tile-5 .tile-title, .nav-tile-6 .tile-title, .nav-tile-8 .tile-title { background: rgba(0, 0, 0, 0.5); color: var(--text-color-light); }
-         .nav-tile-1 .tile-title, .nav-tile-7 .tile-title { background: rgba(255, 255, 255, 0.7); color: var(--text-color-dark); }
-
-         /* --- Menu Button CSS --- */
-         .menu { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; pointer-events: none; width: var(--button-size); height: var(--button-size); display: flex; justify-content: center; align-items: center; }
-         @media (max-width: 480px) { .menu { position: fixed; top: auto; bottom: var(--grid-gap); left: 50%; transform: translateX(-50%); } }
-         #nav-button { width: 100%; height: 100%; background-color: var(--tile-bg-button); border-radius: var(--button-border-radius); display: flex; justify-content: center; align-items: center; cursor: pointer; pointer-events: auto; overflow: hidden; color: var(--logo-stroke-color); opacity: 0; transform: scale(1); transition: opacity var(--reveal-duration) ease-in calc(var(--reveal-duration) * 0.3); }
-         #static-logo { width: calc(100% * var(--logo-scale-in-button)); height: auto; display: block; }
-         #static-logo path { stroke: currentColor; stroke-width: var(--logo-stroke-width); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-
-         /* --- Reveal Animation States --- */
-         body.grid-revealed #splash-screen { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity var(--reveal-duration) ease-out, visibility 0s linear var(--reveal-duration); }
-         body.grid-revealed .nav-container { opacity: 1; visibility: visible; transition-delay: 0s; }
-         body.grid-revealed #nav-button { opacity: 1; transition-delay: calc(var(--reveal-duration) * 0.3); }
-
-         /* --- Scroll Down Indicator --- */
-         #scroll-indicator { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 101; color: var(--logo-stroke-color); opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; pointer-events: none; }
-         #scroll-indicator.visible { opacity: 1; visibility: visible; transition: opacity 0.5s ease-in-out, visibility 0s linear 0s; }
-         @keyframes bounceArrow { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, 8px); } 60% { transform: translate(-50%, 4px); } }
-         #scroll-indicator.visible svg { animation: bounceArrow 2s ease-in-out infinite; width: 36px; height: 36px; }
+        /* --- Scroll Down Indicator --- */
+        #scroll-indicator {
+            position: fixed;
+            bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 101;
+            color: var(--logo-stroke-color);
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s;
+            pointer-events: none;
+        }
+        #scroll-indicator.visible { opacity: 1; visibility: visible; transition: opacity 0.5s ease-in-out, visibility 0s linear 0s; }
+        @keyframes bounceArrow {
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, 8px); }
+            60% { transform: translate(-50%, 4px); }
+        }
+        #scroll-indicator.visible svg { animation: bounceArrow 2s ease-in-out infinite; width: 36px; height: 36px; }
 
     </style>
 </head>
@@ -133,40 +123,16 @@
     <div id="splash-screen">
         <div id="splash-text-top" class="splash-text">Revanth Mahankali</div>
         <svg id="splash-logo" viewBox="0 0 48.9 60" xmlns="http://www.w3.org/2000/svg">
-             <path d="M0,54.4V0h23.1c5.8,0,10,.5,12.7,1.5c2.6,1,4.7,2.7,6.3,5.2c1.6,2.5,2.4,5.4,2.4,8.6s-1.2,7.5-3.6,10.1c-2.4,2.7-6,4.3-10.8,5c2.4,1.4,4.3,2.9,5.9,4.6s3.6,4.6,6.3,8.8l6.6,10.6h-13.1l-7.9-11.8c-2.8-4.2-4.8-6.9-5.8-8c-1-1.1-2.1-1.9-3.3-2.3c-1.2-.4-3-.6-5.5-.6h-2.2v22.7H0Z"/>
-             <path d="M11,23h8.1c5.3,0,8.6-.2,9.9-.7c1.3-.4,2.3-1.2,3.1-2.3c0.7-1.1,1.1-2.5,1.1-4.1s-0.5-3.3-1.5-4.4c-1-1.1-2.4-1.8-4.1-2.1c-0.9-.1-3.6-.2-8-.2h-8.6v13.8Z"/>
-             <path id="vertical-line" d="M5.4,3.3v48.4"/>
-             <path id="curve-to-arrow2" d="M8,28.3s13.4-1.8,17.9,2.8c3.8,3.8,11.8,16.7,14.3,20.9"/>
-             <path id="curve-to-arrow3" d="M9,3.3s12.1-1.9,21.6,0.5c10.8,2.7,12.7,17.2,3.4,22.7"/>
-             <path id="arrow1" d="M4.2,51.1l1.2,0.4l1.2-0.4c-0.5,0.5-0.9,1.4-1.2,2.1c-0.3-0.7-0.7-1.6-1.2-2.1Z"/>
-             <path id="arrow2" d="M41,53.2c-0.6-0.5-1.4-1-2.1-1.2l1.2-0.3l0.8-1c-0.1,0.7,0,1.7,0.1,2.4Z"/>
-             <path id="arrow3" d="M32.6,27.2c0.5-0.6,1.1-1.4,1.3-2.1l0.2,1.2l0.9,0.8c-0.7-0.2-1.7-0.1-2.4,0Z"/>
+            <path d="M0,54.4V0h23.1c5.8,0,10,.5,12.7,1.5c2.6,1,4.7,2.7,6.3,5.2c1.6,2.5,2.4,5.4,2.4,8.6s-1.2,7.5-3.6,10.1c-2.4,2.7-6,4.3-10.8,5c2.4,1.4,4.3,2.9,5.9,4.6s3.6,4.6,6.3,8.8l6.6,10.6h-13.1l-7.9-11.8c-2.8-4.2-4.8-6.9-5.8-8c-1-1.1-2.1-1.9-3.3-2.3c-1.2-.4-3-.6-5.5-.6h-2.2v22.7H0Z"/>
+            <path d="M11,23h8.1c5.3,0,8.6-.2,9.9-.7c1.3-.4,2.3-1.2,3.1-2.3c0.7-1.1,1.1-2.5,1.1-4.1s-0.5-3.3-1.5-4.4c-1-1.1-2.4-1.8-4.1-2.1c-0.9-.1-3.6-.2-8-.2h-8.6v13.8Z"/>
+            <path id="vertical-line" d="M5.4,3.3v48.4"/>
+            <path id="curve-to-arrow2" d="M8,28.3s13.4-1.8,17.9,2.8c3.8,3.8,11.8,16.7,14.3,20.9"/>
+            <path id="curve-to-arrow3" d="M9,3.3s12.1-1.9,21.6,0.5c10.8,2.7,12.7,17.2,3.4,22.7"/>
+            <path id="arrow1" d="M4.2,51.1l1.2,0.4l1.2-0.4c-0.5,0.5-0.9,1.4-1.2,2.1c-0.3-0.7-0.7-1.6-1.2-2.1Z"/>
+            <path id="arrow2" d="M41,53.2c-0.6-0.5-1.4-1-2.1-1.2l1.2-0.3l0.8-1c-0.1,0.7,0,1.7,0.1,2.4Z"/>
+            <path id="arrow3" d="M32.6,27.2c0.5-0.6,1.1-1.4,1.3-2.1l0.2,1.2l0.9,0.8c-0.7-0.2-1.7-0.1-2.4,0Z"/>
         </svg>
         <div id="splash-text-bottom" class="splash-text">Scroll to look at my work!</div>
-    </div>
-
-    <div class="nav-container">
-        <div class="nav-wrapper">
-             <div class="nav-tile nav-tile-1"> <a href="https://drive.google.com/drive/folders/1nKd3_Sox18teHE7yQkD_PsoA5mJOcfpi?usp=drive_link"> <span class="tile-title">Drive</span> </a> </div>
-            <div class="nav-tile nav-tile-2"> <a href="/link2"> <span class="tile-title">Voice & Tone</span> </a> </div>
-            <div class="nav-tile nav-tile-3"> <a href="/link3"> <span class="tile-title">Logo</span> </a> </div>
-            <div class="nav-tile nav-tile-4"> <a href="/link4"> <span class="tile-title">Typography</span> </a> </div>
-            <div class="nav-tile nav-tile-5"> <a href="/link5"> <span class="tile-title">Iconography</span> </a> </div>
-            <div class="nav-tile nav-tile-6"> <a href="/link6"> <span class="tile-title">Color</span> </a> </div>
-            <div class="nav-tile nav-tile-7"> <a href="/link7"> <span class="tile-title">Imagery</span> </a> </div>
-            <div class="nav-tile nav-tile-8"> <a href="/link8"> <span class="tile-title">Motion</span> </a> </div>
-            <div class="menu">
-                 <div id="nav-button" role="button" tabindex="0" aria-label="Return to intro">
-                     <svg id="static-logo" viewBox="0 0 48.9 60" xmlns="http://www.w3.org/2000/svg">
-                           <path d="M0,54.4V0h23.1c5.8,0,10,.5,12.7,1.5c2.6,1,4.7,2.7,6.3,5.2c1.6,2.5,2.4,5.4,2.4,8.6s-1.2,7.5-3.6,10.1c-2.4,2.7-6,4.3-10.8,5c2.4,1.4,4.3,2.9,5.9,4.6s3.6,4.6,6.3,8.8l6.6,10.6h-13.1l-7.9-11.8c-2.8-4.2-4.8-6.9-5.8-8c-1-1.1-2.1-1.9-3.3-2.3c-1.2-.4-3-.6-5.5-.6h-2.2v22.7H0Z"/>
-                           <path d="M5.4,3.3v48.4"/>
-                           <path d="M11,23h8.1c5.3,0,8.6-.2,9.9-.7c1.3-.4,2.3-1.2,3.1-2.3c0.7-1.1,1.1-2.5,1.1-4.1s-0.5-3.3-1.5-4.4c-1-1.1-2.4-1.8-4.1-2.1c-0.9-.1-3.6-.2-8-.2h-8.6v13.8Z"/>
-                           <path d="M8,28.3s13.4-1.8,17.9,2.8c3.8,3.8,11.8,16.7,14.3,20.9"/>
-                           <path d="M9,3.3s12.1-1.9,21.6,0.5c10.8,2.7,12.7,17.2,3.4,22.7"/>
-                      </svg>
-                 </div>
-             </div>
-        </div>
     </div>
 
     <div id="scroll-indicator">
@@ -189,19 +155,17 @@
             const curveToArrow3 = document.getElementById('curve-to-arrow3');
             const allPaths = logo.querySelectorAll('path');
             const body = document.body;
-            const navContainer = document.querySelector('.nav-container');
-            const navButton = document.getElementById('nav-button');
             const scrollIndicator = document.getElementById('scroll-indicator');
             const splashTextTop = document.getElementById('splash-text-top');
             const splashTextBottom = document.getElementById('splash-text-bottom');
 
             // State Variables
-            let isRevealed = false;
+            let hasRedirected = false;
             let scrollListenerAttached = false;
             let animationTimeouts = [];
 
             // --- Helper: Get Path Length ---
-            function getAccuratePathLength(pathElement) { try { if (pathElement?.getTotalLength && typeof pathElement.getTotalLength === 'function') { if (pathElement.getBBox && typeof pathElement.getBBox === 'function' && pathElement.getBBox().width >= 0) { const length = pathElement.getTotalLength(); return length > 0.1 ? length : 1; } } } catch (e) { console.warn("Error getting path length:", e); } console.warn("Using fallback length for:", pathElement.id || pathElement); return 1000; }
+            function getAccuratePathLength(pathElement) { try { if (pathElement?.getTotalLength && typeof pathElement.getTotalLength === 'function') { if (pathElement.getBBox && typeof pathElement.getBBox === 'function' && pathElement.getBBox().width >= 0) { const length = pathElement.getTotalLength(); return length > 0.1 ? length : 1; } } } catch (e) { console.warn("Error getting path length:", e); } return 1000; }
 
             // --- Helper: Clear All Animation Timeouts ---
             function clearAnimationTimeouts() {
@@ -210,20 +174,28 @@
                 allPaths.forEach(path => { path.classList.remove('animate-main', 'animate-arrow'); });
                 if (splashTextTop) {
                     splashTextTop.classList.remove('visible');
-                    splashTextTop.style.fontWeight = ''; // Reset weight
-                    splashTextTop.style.fontFamily = ''; // Reset font family (though it should stay Poppins)
+                    splashTextTop.style.fontWeight = '';
                 }
                 if (splashTextBottom) { splashTextBottom.classList.remove('visible'); }
                 if (scrollIndicator) { scrollIndicator.classList.remove('visible'); }
             }
 
             // --- 1. Prepare Paths (Setup) ---
-            function setupLogoPaths() { allPaths.forEach(path => { const length = getAccuratePathLength(path); path.style.setProperty('--path-length', length); path.style.strokeDasharray = length; path.style.strokeDashoffset = length; path.classList.remove('animate-main', 'animate-arrow'); }); body.classList.remove('loading'); }
+            function setupLogoPaths() {
+                allPaths.forEach(path => {
+                    const length = getAccuratePathLength(path);
+                    path.style.setProperty('--path-length', length);
+                    path.style.strokeDasharray = length;
+                    path.style.strokeDashoffset = length;
+                    path.classList.remove('animate-main', 'animate-arrow');
+                });
+                body.classList.remove('loading');
+            }
 
             // --- Animation Sequence Orchestrator ---
             function startAnimationSequence() {
-                if (isRevealed || !logo) return;
-                console.log("Starting sequence (click logo to loop)...");
+                if (hasRedirected || !logo) return;
+                console.log("Starting animation sequence...");
                 clearAnimationTimeouts();
                 allPaths.forEach(path => { const length = parseFloat(path.style.getPropertyValue('--path-length')) || getAccuratePathLength(path); if (!isNaN(length) && length > 0) path.style.strokeDashoffset = length; else path.style.strokeDashoffset = 1000; path.classList.remove('animate-main', 'animate-arrow'); });
 
@@ -238,92 +210,86 @@
                 let cumulativeDelay = baseDrawDelayMs;
                 let stage1EndTime, stage2EndTime, stage3EndTime, stage4StartTime, stage4EndTime;
 
-                // Stages 1-4 (Animation)
-                let timeout1 = setTimeout(() => { if (isRevealed) return; if (verticalLine) verticalLine.classList.add('animate-arrow'); if (arrow1) arrow1.classList.add('animate-arrow'); }, cumulativeDelay); animationTimeouts.push(timeout1);
+                let timeout1 = setTimeout(() => { if (verticalLine) verticalLine.classList.add('animate-arrow'); if (arrow1) arrow1.classList.add('animate-arrow'); }, cumulativeDelay); animationTimeouts.push(timeout1);
                 stage1EndTime = cumulativeDelay + arrowStageDurationMs;
                 cumulativeDelay = stage1EndTime + arrowStaggerMs;
-                let timeout2 = setTimeout(() => { if (isRevealed) return; if (curveToArrow3) curveToArrow3.classList.add('animate-arrow'); if (arrow3) arrow3.classList.add('animate-arrow'); }, cumulativeDelay); animationTimeouts.push(timeout2);
+                let timeout2 = setTimeout(() => { if (curveToArrow3) curveToArrow3.classList.add('animate-arrow'); if (arrow3) arrow3.classList.add('animate-arrow'); }, cumulativeDelay); animationTimeouts.push(timeout2);
                 stage2EndTime = cumulativeDelay + arrowStageDurationMs;
                 cumulativeDelay = stage2EndTime + arrowStaggerMs;
-                let timeout3 = setTimeout(() => { if (isRevealed) return; if (curveToArrow2) curveToArrow2.classList.add('animate-arrow'); if (arrow2) arrow2.classList.add('animate-arrow'); }, cumulativeDelay); animationTimeouts.push(timeout3);
+                let timeout3 = setTimeout(() => { if (curveToArrow2) curveToArrow2.classList.add('animate-arrow'); if (arrow2) arrow2.classList.add('animate-arrow'); }, cumulativeDelay); animationTimeouts.push(timeout3);
                 stage3EndTime = cumulativeDelay + arrowStageDurationMs;
                 cumulativeDelay = stage3EndTime + arrowStaggerMs;
                 stage4StartTime = cumulativeDelay;
-                let timeout4 = setTimeout(() => { if (isRevealed) return; mainLogoPaths.forEach(p => p.classList.add('animate-main')); }, cumulativeDelay); animationTimeouts.push(timeout4);
+                let timeout4 = setTimeout(() => { mainLogoPaths.forEach(p => p.classList.add('animate-main')); }, cumulativeDelay); animationTimeouts.push(timeout4);
                 stage4EndTime = stage4StartTime + baseDrawDurationMs;
 
-                // --- Schedule Text & Scroll Arrow Visibility ---
                 const elementsAppearTime = stage4EndTime + textFadeDelayMs;
-                let showTextTimeout = setTimeout(() => { if (!isRevealed) { if(splashTextTop) splashTextTop.classList.add('visible'); if(splashTextBottom) splashTextBottom.classList.add('visible'); } }, elementsAppearTime); animationTimeouts.push(showTextTimeout);
-                let showArrowTimeout = setTimeout(() => { if (!isRevealed && scrollIndicator) { scrollIndicator.classList.add('visible'); } }, elementsAppearTime); animationTimeouts.push(showArrowTimeout);
+                let showTextTimeout = setTimeout(() => { if(splashTextTop) splashTextTop.classList.add('visible'); if(splashTextBottom) splashTextBottom.classList.add('visible'); }, elementsAppearTime); animationTimeouts.push(showTextTimeout);
+                let showArrowTimeout = setTimeout(() => { if (scrollIndicator) { scrollIndicator.classList.add('visible'); } }, elementsAppearTime); animationTimeouts.push(showArrowTimeout);
 
-                // --- Schedule Font WEIGHT Montage (using Poppins) ---
                 const montageStartTime = elementsAppearTime + textFadeDurationMs;
-                // *** Define Poppins weights for the montage ***
-                 const montageWeights = [
-                    100, // Thin
-                    300, // Light
-                    400, // Regular
-                    700, // Bold
-                    900, // Black
-                    600  // SemiBold (ending montage on this before final set)
-                 ];
-                const finalWeight = 600; // Final weight (SemiBold)
-                const montageDuration = 2000; // 2 seconds total
-                const weightInterval = montageDuration / montageWeights.length; // Time per weight
+                const montageWeights = [100, 300, 400, 700, 900, 600];
+                const finalWeight = 600;
+                const montageDuration = 2000;
+                const weightInterval = montageDuration / montageWeights.length;
 
-                // Schedule individual weight changes
                 for (let i = 0; i < montageWeights.length; i++) {
                     const weight = montageWeights[i];
                     const changeTime = montageStartTime + (i * weightInterval);
                     let weightTimeout = setTimeout(() => {
-                        if (!isRevealed && splashTextTop) {
-                            // *** Change font-weight ***
+                        if (splashTextTop) {
                             splashTextTop.style.fontWeight = weight;
-                            // Keep font family consistent
                             splashTextTop.style.fontFamily = "'Poppins', sans-serif";
-                            console.log(`Montage: Font weight to ${weight}`);
                         }
                     }, changeTime);
                     animationTimeouts.push(weightTimeout);
                 }
 
-                // Schedule setting the final weight
                 const finalWeightTime = montageStartTime + montageDuration;
                 let finalWeightTimeout = setTimeout(() => {
-                    if (!isRevealed && splashTextTop) {
-                        // *** Set final font-weight ***
+                    if (splashTextTop) {
                         splashTextTop.style.fontWeight = finalWeight;
-                        splashTextTop.style.fontFamily = "'Poppins', sans-serif"; // Ensure family is set
-                        console.log(`Montage Finished: Set font weight to ${finalWeight}`);
+                        splashTextTop.style.fontFamily = "'Poppins', sans-serif";
                     }
                 }, finalWeightTime);
                 animationTimeouts.push(finalWeightTimeout);
-
-                 console.log(`Animation sequence finished scheduling. Hold phase starts around ${stage4EndTime}ms. Click logo to repeat.`);
             }
 
             // --- Interaction Handlers ---
-            function enableScrollAndListen() { if (!isRevealed && !scrollListenerAttached) { body.style.overflow = 'auto'; body.classList.remove('no-scroll'); window.addEventListener('scroll', handleScroll, { passive: true, once: true }); scrollListenerAttached = true; } else if (isRevealed) { body.style.overflow = 'auto'; body.classList.remove('no-scroll'); } else { body.style.overflow = 'hidden'; body.classList.add('no-scroll'); if (!scrollListenerAttached) { window.addEventListener('scroll', handleScroll, { passive: true, once: true }); scrollListenerAttached = true; } } }
-            function handleScroll() { if (isRevealed) return; isRevealed = true; scrollListenerAttached = false; console.log("Scroll detected! Revealing grid..."); clearAnimationTimeouts(); body.classList.add('grid-revealed'); body.style.overflow = 'auto'; body.classList.remove('no-scroll'); }
-            function returnToIntro() { if (!isRevealed || !splashScreen) return; console.log("Returning to intro..."); isRevealed = false; scrollListenerAttached = false; clearAnimationTimeouts(); body.classList.remove('grid-revealed'); body.classList.add('no-scroll'); body.style.overflow = 'hidden'; window.scrollTo({ top: 0, behavior: 'smooth' }); allPaths.forEach(path => { const length = parseFloat(path.style.getPropertyValue('--path-length')) || getAccuratePathLength(path); if (!isNaN(length) && length > 0) path.style.strokeDashoffset = length; else path.style.strokeDashoffset = 1000; path.classList.remove('animate-main', 'animate-arrow'); }); const styles = getComputedStyle(document.documentElement); const revealDurationMs = parseFloat(styles.getPropertyValue('--reveal-duration').trim() || '0.6') * 1000; setTimeout(() => { if (!isRevealed) { startAnimationSequence(); enableScrollAndListen(); } }, revealDurationMs + 50); }
+            function enableScrollAndListen() {
+                if (!scrollListenerAttached) {
+                    body.classList.remove('no-scroll');
+                    body.classList.add('can-scroll');
+                    window.addEventListener('scroll', handleScroll, { passive: true, once: true });
+                    scrollListenerAttached = true;
+                }
+            }
+
+            function handleScroll() {
+                if (hasRedirected) return;
+                hasRedirected = true; // Prevent multiple redirects
+                scrollListenerAttached = false;
+                console.log("Scroll detected! Redirecting...");
+                // Redirect to the new website
+                window.location.href = 'https://portfoliorevanth.framer.website/';
+            }
 
             // --- Initial Setup & Event Listeners ---
-             if (!logo || !splashScreen || !navButton || !scrollIndicator || !splashTextTop || !splashTextBottom) { console.error("Essential elements not found."); body.classList.remove('loading'); return; }
-            body.classList.add('no-scroll'); setupLogoPaths();
-            setTimeout(() => { startAnimationSequence(); enableScrollAndListen(); }, 100); // Start first sequence on load
+            if (!logo || !splashScreen) {
+                console.error("Essential splash screen elements not found.");
+                body.classList.remove('loading');
+                return;
+            }
+            body.classList.add('no-scroll');
+            setupLogoPaths();
+            setTimeout(() => {
+                startAnimationSequence();
+                enableScrollAndListen();
+            }, 100);
 
-            navButton.addEventListener('click', returnToIntro); // Blue button returns to intro
-            navButton.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { returnToIntro(); } });
-
-            // --- Click listener on SVG logo to restart animation ---
             logo.addEventListener('click', () => {
-                if (!isRevealed) { // Only restart if splash screen is visible
-                    console.log("Splash logo clicked, restarting animation...");
-                    startAnimationSequence(); // Clears previous state and restarts
-                } else {
-                    console.log("Splash logo clicked, but grid is revealed. No action.");
-                }
+                console.log("Splash logo clicked, restarting animation...");
+                startAnimationSequence();
             });
 
         });
