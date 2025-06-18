@@ -215,10 +215,10 @@
                     cumulativeDelay += arrowDrawDurationMs + arrowStaggerMs;
                 });
                 
-                let mainDrawTimeout = setTimeout(() => {
-                    mainLogoPaths.forEach(p => p.classList.add('animate-main'));
-                }, cumulativeDelay);
-                animationTimeouts.push(mainDrawTimeout);
+                //let mainDrawTimeout = setTimeout(() => {
+                  //  mainLogoPaths.forEach(p => p.classList.add('animate-main'));
+                //}, cumulativeDelay);
+                //animationTimeouts.push(mainDrawTimeout);
 
                 const totalDrawTime = cumulativeDelay + baseDrawDurationMs;
                 const elementsAppearTime = totalDrawTime + textFadeDelayMs;
