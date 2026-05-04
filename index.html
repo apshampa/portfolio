@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revanth Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;700;900&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -23,38 +25,65 @@
             --arrow-stagger: 0.15s;
             --reveal-duration: 0.6s;
             --text-fade-duration: 0.4s;
-            --text-fade-delay: 0.2s; /* Delay after logo finishes before text appears */
+            --text-fade-delay: 0.2s;
+            /* Delay after logo finishes before text appears */
 
             /* Layout */
             --logo-stroke-width: 0.7;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { font-size: 16px; scroll-behavior: smooth; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--page-background);
             min-height: 105vh;
-            overflow: hidden; /* Start with no scroll */
+            overflow: hidden;
+            /* Start with no scroll */
             position: relative;
         }
-        body.loading { opacity: 0; }
-        body.no-scroll { overflow: hidden; }
-        body.can-scroll { overflow: auto; }
+
+        body.loading {
+            opacity: 0;
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        body.can-scroll {
+            overflow: auto;
+        }
 
         /* --- Splash Screen CSS --- */
         #splash-screen {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background-color: var(--background-blue);
-            display: flex; justify-content: center; align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 100;
-            cursor: pointer; /* Cursor indicates the whole screen is clickable */
-            opacity: 1; visibility: visible;
+            cursor: pointer;
+            /* Cursor indicates the whole screen is clickable */
+            opacity: 1;
+            visibility: visible;
             transition: opacity var(--reveal-duration) ease-out, visibility 0s linear var(--reveal-duration);
             will-change: opacity, visibility;
         }
+
         #splash-logo {
             width: 30vh;
             max-width: 70%;
@@ -62,6 +91,7 @@
             display: block;
             position: relative;
         }
+
         #splash-logo path {
             fill: none;
             stroke: var(--logo-stroke-color);
@@ -71,27 +101,52 @@
             stroke-dasharray: 1;
             stroke-dashoffset: 1;
         }
-        @keyframes drawToZero { to { stroke-dashoffset: 0; } }
-        #splash-logo path.animate-main { animation: drawToZero var(--base-draw-duration) cubic-bezier(.4,0,.3,1) forwards; }
-        #splash-logo path.animate-arrow { animation: drawToZero var(--arrow-draw-duration) cubic-bezier(.4,0,.3,1) forwards; }
+
+        @keyframes drawToZero {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        #splash-logo path.animate-main {
+            animation: drawToZero var(--base-draw-duration) cubic-bezier(.4, 0, .3, 1) forwards;
+        }
+
+        #splash-logo path.animate-arrow {
+            animation: drawToZero var(--arrow-draw-duration) cubic-bezier(.4, 0, .3, 1) forwards;
+        }
 
         /* --- Splash Screen Text Styles --- */
         .splash-text {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            color: var(--logo-stroke-color); text-align: center;
-            opacity: 0; visibility: hidden;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--logo-stroke-color);
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
             transition: opacity var(--text-fade-duration) ease-in-out, visibility 0s linear var(--text-fade-duration);
-            pointer-events: none; z-index: 101;
+            pointer-events: none;
+            z-index: 101;
             font-family: 'Poppins', sans-serif;
             width: 90%;
         }
+
         #splash-text-top {
             top: calc(50% - 28vh);
             font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 600; /* Simple font weight */
-            user-select: none; -webkit-user-select: none; -moz-user-select: none;
+            font-weight: 600;
+            /* Simple font weight */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
         }
-        .splash-text.visible { opacity: 1; visibility: visible; transition-delay: 0s; }
+
+        .splash-text.visible {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0s;
+        }
 
         /* --- Loading Indicator --- */
         #loading-indicator {
@@ -109,31 +164,40 @@
             visibility: hidden;
             transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s;
         }
+
         #loading-indicator.visible {
             opacity: 1;
             visibility: visible;
             transition: opacity 0.5s ease-in-out;
         }
-        @keyframes spin {
-            0% { transform: translateX(-50%) rotate(0deg); }
-            100% { transform: translateX(-50%) rotate(360deg); }
-        }
 
+        @keyframes spin {
+            0% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translateX(-50%) rotate(360deg);
+            }
+        }
     </style>
 </head>
+
 <body class="loading no-scroll">
 
     <div id="splash-screen">
         <div id="splash-text-top" class="splash-text"></div>
         <svg id="splash-logo" viewBox="0 0 48.9 60" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,54.4V0h23.1c5.8,0,10,.5,12.7,1.5c2.6,1,4.7,2.7,6.3,5.2c1.6,2.5,2.4,5.4,2.4,8.6s-1.2,7.5-3.6,10.1c-2.4,2.7-6,4.3-10.8,5c2.4,1.4,4.3,2.9,5.9,4.6s3.6,4.6,6.3,8.8l6.6,10.6h-13.1l-7.9-11.8c-2.8-4.2-4.8-6.9-5.8-8c-1-1.1-2.1-1.9-3.3-2.3c-1.2-.4-3-.6-5.5-.6h-2.2v22.7H0Z"/>
-            <path d="M11,23h8.1c5.3,0,8.6-.2,9.9-.7c1.3-.4,2.3-1.2,3.1-2.3c0.7-1.1,1.1-2.5,1.1-4.1s-0.5-3.3-1.5-4.4c-1-1.1-2.4-1.8-4.1-2.1c-0.9-.1-3.6-.2-8-.2h-8.6v13.8Z"/>
-            <path id="vertical-line" d="M5.4,3.3v48.4"/>
-            <path id="curve-to-arrow2" d="M8,28.3s13.4-1.8,17.9,2.8c3.8,3.8,11.8,16.7,14.3,20.9"/>
-            <path id="curve-to-arrow3" d="M9,3.3s12.1-1.9,21.6,0.5c10.8,2.7,12.7,17.2,3.4,22.7"/>
-            <path id="arrow1" d="M4.2,51.1l1.2,0.4l1.2-0.4c-0.5,0.5-0.9,1.4-1.2,2.1c-0.3-0.7-0.7-1.6-1.2-2.1Z"/>
-            <path id="arrow2" d="M41,53.2c-0.6-0.5-1.4-1-2.1-1.2l1.2-0.3l0.8-1c-0.1,0.7,0,1.7,0.1,2.4Z"/>
-            <path id="arrow3" d="M32.6,27.2c0.5-0.6,1.1-1.4,1.3-2.1l0.2,1.2l0.9,0.8c-0.7-0.2-1.7-0.1-2.4,0Z"/>
+            <path
+                d="M0,54.4V0h23.1c5.8,0,10,.5,12.7,1.5c2.6,1,4.7,2.7,6.3,5.2c1.6,2.5,2.4,5.4,2.4,8.6s-1.2,7.5-3.6,10.1c-2.4,2.7-6,4.3-10.8,5c2.4,1.4,4.3,2.9,5.9,4.6s3.6,4.6,6.3,8.8l6.6,10.6h-13.1l-7.9-11.8c-2.8-4.2-4.8-6.9-5.8-8c-1-1.1-2.1-1.9-3.3-2.3c-1.2-.4-3-.6-5.5-.6h-2.2v22.7H0Z" />
+            <path
+                d="M11,23h8.1c5.3,0,8.6-.2,9.9-.7c1.3-.4,2.3-1.2,3.1-2.3c0.7-1.1,1.1-2.5,1.1-4.1s-0.5-3.3-1.5-4.4c-1-1.1-2.4-1.8-4.1-2.1c-0.9-.1-3.6-.2-8-.2h-8.6v13.8Z" />
+            <path id="vertical-line" d="M5.4,3.3v48.4" />
+            <path id="curve-to-arrow2" d="M8,28.3s13.4-1.8,17.9,2.8c3.8,3.8,11.8,16.7,14.3,20.9" />
+            <path id="curve-to-arrow3" d="M9,3.3s12.1-1.9,21.6,0.5c10.8,2.7,12.7,17.2,3.4,22.7" />
+            <path id="arrow1" d="M4.2,51.1l1.2,0.4l1.2-0.4c-0.5,0.5-0.9,1.4-1.2,2.1c-0.3-0.7-0.7-1.6-1.2-2.1Z" />
+            <path id="arrow2" d="M41,53.2c-0.6-0.5-1.4-1-2.1-1.2l1.2-0.3l0.8-1c-0.1,0.7,0,1.7,0.1,2.4Z" />
+            <path id="arrow3" d="M32.6,27.2c0.5-0.6,1.1-1.4,1.3-2.1l0.2,1.2l0.9,0.8c-0.7-0.2-1.7-0.1-2.4,0Z" />
         </svg>
         <div id="loading-indicator"></div>
     </div>
@@ -162,7 +226,7 @@
                 hasRedirected = true; // Prevent multiple redirects
                 clearAnimationTimeouts(); // Stop any pending timers
                 console.log("Redirecting now...");
-                window.location.href = 'https://portfoliorevanth.framer.website/';
+                window.location.href = 'https://google.com';
             }
 
             // --- Helper: Clear All Animation Timeouts ---
@@ -214,9 +278,9 @@
                     animationTimeouts.push(timeout);
                     cumulativeDelay += arrowDrawDurationMs + arrowStaggerMs;
                 });
-                
-               // let mainDrawTimeout = setTimeout(() => {
-                 //   mainLogoPaths.forEach(p => p.classList.add('animate-main'));
+
+                // let mainDrawTimeout = setTimeout(() => {
+                //   mainLogoPaths.forEach(p => p.classList.add('animate-main'));
                 //}, cumulativeDelay);
                 //animationTimeouts.push(mainDrawTimeout);
 
@@ -248,7 +312,7 @@
                 body.classList.remove('loading');
                 return;
             }
-            
+
             body.classList.add('no-scroll');
             startAnimationSequence();
 
@@ -262,4 +326,5 @@
     </script>
 
 </body>
+
 </html>
